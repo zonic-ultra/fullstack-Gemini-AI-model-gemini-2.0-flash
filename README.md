@@ -1,1 +1,1 @@
-# fullstack-Gemini-AI-model-gemini-2.0-flash
+# Fullstack App-Gemini-AI using model: gemini-2.0-flash

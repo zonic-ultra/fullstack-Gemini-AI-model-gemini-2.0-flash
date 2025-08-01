@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gemini AI - Ask a Question :dendev</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #answerText p {
+            text-indent: 2em;
+            margin-bottom: 1em;
+            color: #000000;
+        }
+    </style>
+</head>
+<body style="background-color: #244245" >
+
+<div class="container py-5">
+    <div class="card shadow-lg p-4 rounded-4" style="background-color: #1a4a4a">
+        <h2 style="color: #FFFFFF" class="text-center mb-4">Ask Gemini AI : model gemini-2.0-flash : ©dendev</h2>
+        <form id="questionForm">
+            <div class="mb-3">
+                <input type="text" style="background-color: #82DFDB" class="form-control form-control-lg" id="questionInput" placeholder="Enter your question here..." required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg" style="background-color: #069494">Ask</button>
+            </div>
+        </form>
+        <div class="alert alert-success mt-4 d-none" id="answerBox" style="background-color: #4DB6AC">
+            <strong>Answer:</strong>
+            <div id="answerText"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("questionForm");
+    const answerBox = document.getElementById("answerBox");
+    const answerText = document.getElementById("answerText");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const question = document.getElementById("questionInput").value;
+
+        const response = await fetch("/api/qna/question", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ question })
+        });
+
+        const data = await response.json();
+        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "No answer received.";
+
+        // Convert to paragraph format
+        const paragraphs = rawText
+            .split(/\n\s*\n/) // Split on blank lines
+            .map(p => `<p>${p.trim()}</p>`)
+            .join("");
+
+        answerText.innerHTML = paragraphs;
+        answerBox.classList.remove("d-none");
+    });
+</script>
+</body>
+</html>
